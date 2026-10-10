@@ -2,6 +2,8 @@
   "name": "dicethrower",
   "private": true,
   "version": "1.0.0",
+  "description": "Schermvullende dobbelsteen-app in React en TypeScript, met Bootstrap en 11 talen",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
