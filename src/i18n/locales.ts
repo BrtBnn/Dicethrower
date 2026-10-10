@@ -1,7 +1,6 @@
-// Vertalingen. Een taal toevoegen: voeg een regel toe aan `languages` en een object aan `locales`
-// met exact dezelfde sleutels als `en`. Plaatshouders als {n} blijven onvertaald staan.
-
-export const DEFAULT_LANGUAGE = 'en';
+// Vertalingen. Een taal toevoegen: voeg een regel toe aan `languages` en een object aan `locales`.
+// TypeScript dwingt af dat elke taal alle sleutels van `Messages` heeft.
+// Plaatshouders als {n} blijven onvertaald staan.
 
 // Naam in de eigen taal, en de schrijfrichting (rtl = van rechts naar links).
 export const languages = [
@@ -16,9 +15,40 @@ export const languages = [
   { code: 'pt', name: 'Português', dir: 'ltr' },
   { code: 'ru', name: 'Русский', dir: 'ltr' },
   { code: 'ur', name: 'اردو', dir: 'rtl' },
-];
+] as const;
 
-export const locales = {
+export type LanguageCode = (typeof languages)[number]['code'];
+export type Direction = (typeof languages)[number]['dir'];
+
+export const DEFAULT_LANGUAGE: LanguageCode = 'en';
+
+export interface Messages {
+  title: string;
+  notRolledYet: string;
+  rolledOne: string; // {n}
+  rolledTotal: string; // {total}
+  rollingOne: string;
+  rollingMany: string;
+  recentRolls: string;
+  rollsAppearHere: string;
+  perSide: string;
+  thrownCount: string; // {n}
+  diceUnit: string;
+  diceCount: string;
+  fewer: string;
+  more: string;
+  roll: string;
+  rolling: string;
+  fullscreen: string;
+  exitFullscreen: string;
+  dieAria: string; // {n}
+  tallyAria: string; // {counts}
+  language: string;
+}
+
+export type MessageKey = keyof Messages;
+
+export const locales: Record<LanguageCode, Messages> = {
   nl: {
     title: "Dobbelsteen",
     notRolledYet: "Nog niet gegooid",
@@ -273,3 +303,7 @@ export const locales = {
     language: "زبان",
   },
 };
+
+export function isLanguageCode(value: string): value is LanguageCode {
+  return Object.prototype.hasOwnProperty.call(locales, value);
+}

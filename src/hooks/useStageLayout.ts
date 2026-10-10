@@ -1,12 +1,18 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
 
 export const GAP = 16;
 const MAX_SIZE = 320;
 const MIN_SIZE = 60;
 
+export interface Layout {
+  cols: number;
+  rows: number;
+  size: number;
+}
+
 // Kies het aantal kolommen waarbij de dobbelstenen zo groot mogelijk worden.
-export function bestLayout(count, width, height) {
-  let best = { cols: 1, rows: count, size: 0 };
+export function bestLayout(count: number, width: number, height: number): Layout {
+  let best: Layout = { cols: 1, rows: count, size: 0 };
   for (let cols = 1; cols <= count; cols++) {
     const rows = Math.ceil(count / cols);
     const size = Math.min((width - GAP * (cols - 1)) / cols, (height - GAP * (rows - 1)) / rows);
@@ -17,8 +23,8 @@ export function bestLayout(count, width, height) {
 }
 
 // Meet het speelveld en geeft de beste indeling voor het aantal dobbelstenen.
-export function useStageLayout(count) {
-  const ref = useRef(null);
+export function useStageLayout(count: number): { ref: RefObject<HTMLDivElement>; layout: Layout } {
+  const ref = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ w: 0, h: 0 });
 
   useLayoutEffect(() => {

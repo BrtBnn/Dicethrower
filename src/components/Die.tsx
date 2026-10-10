@@ -1,7 +1,8 @@
-import { useI18n } from '../i18n/I18nProvider.jsx';
+import { useI18n } from '../i18n/I18nProvider';
+import type { Face } from '../types';
 
 // Welke van de 9 vakjes (3x3, rij voor rij) een oog krijgen.
-const PIPS = {
+const PIPS: Record<Face, number[]> = {
   1: [4],
   2: [0, 8],
   3: [0, 4, 8],
@@ -11,7 +12,13 @@ const PIPS = {
 };
 const CELLS = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-export default function Die({ value, rolling, index }) {
+interface DieProps {
+  value: Face;
+  rolling: boolean;
+  index: number;
+}
+
+export default function Die({ value, rolling, index }: DieProps) {
   const { t } = useI18n();
   return (
     <div

@@ -1,22 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
-import Die from './components/Die.jsx';
-import Tally from './components/Tally.jsx';
-import LanguageSelect from './components/LanguageSelect.jsx';
-import { FullscreenIcon } from './components/Icons.jsx';
-import { useStageLayout, GAP } from './hooks/useStageLayout.js';
-import { useSystemTheme } from './hooks/useSystemTheme.js';
-import { useI18n } from './i18n/I18nProvider.jsx';
+import Die from './components/Die';
+import Tally from './components/Tally';
+import LanguageSelect from './components/LanguageSelect';
+import { FullscreenIcon } from './components/Icons';
+import { useStageLayout, GAP } from './hooks/useStageLayout';
+import { useSystemTheme } from './hooks/useSystemTheme';
+import { useI18n } from './i18n/I18nProvider';
+import type { Face, Roll } from './types';
 
 const MIN_DICE = 1;
 const MAX_DICE = 6;
 const ROLL_TICKS = 10;
 const TICK_MS = 70;
 
-const randomFace = () => 1 + Math.floor(Math.random() * 6);
-const sum = (arr) => arr.reduce((a, b) => a + b, 0);
+const randomFace = (): Face => (1 + Math.floor(Math.random() * 6)) as Face;
+const sum = (arr: number[]): number => arr.reduce((a, b) => a + b, 0);
+
+interface EmphasisProps {
+  template: string;
+  token: string;
+  value: number;
+}
 
 // Zet één waarde vet in een vertaalde zin, op de plek waar de taal die hoort.
-function Emphasis({ template, token, value }) {
+function Emphasis({ template, token, value }: EmphasisProps) {
   const [before, after = ''] = template.split(`{${token}}`);
   return (
     <span>
@@ -30,16 +37,16 @@ function Emphasis({ template, token, value }) {
 export default function App() {
   useSystemTheme();
   const { t, tRaw } = useI18n();
-  const [values, setValues] = useState([5, 3]);
+  const [values, setValues] = useState<Face[]>([5, 3]);
   const [rolling, setRolling] = useState(false);
-  const [rolls, setRolls] = useState([]);
+  const [rolls, setRolls] = useState<Roll[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const timer = useRef(null);
+  const timer = useRef<number | undefined>(undefined);
   const nextId = useRef(0);
   const count = values.length;
   const { ref: stageRef, layout } = useStageLayout(count);
 
-  useEffect(() => () => clearInterval(timer.current), []);
+  useEffect(() => () => window.clearInterval(timer.current), []);
 
   useEffect(() => {
     const onChange = () => setIsFullscreen(!!document.fullscreenElement);
@@ -47,7 +54,7 @@ export default function App() {
     return () => document.removeEventListener('fullscreenchange', onChange);
   }, []);
 
-  function setCount(n) {
+  function setCount(n: number) {
     if (rolling || n < MIN_DICE || n > MAX_DICE) return;
     setValues((prev) => {
       if (n > prev.length) {
@@ -66,7 +73,7 @@ export default function App() {
       setValues(final);
       setRolling(false);
       nextId.current += 1;
-      const entry = { id: nextId.current, values: final, sum: sum(final) };
+      const entry: Roll = { id: nextId.current, values: final, sum: sum(final) };
       setRolls((prev) => [entry, ...prev]);
     };
 
@@ -78,10 +85,10 @@ export default function App() {
 
     setRolling(true);
     let ticks = 0;
-    timer.current = setInterval(() => {
+    timer.current = window.setInterval(() => {
       ticks += 1;
       if (ticks >= ROLL_TICKS) {
-        clearInterval(timer.current);
+        window.clearInterval(timer.current);
         finish();
       } else {
         setValues((prev) => prev.map(randomFace));

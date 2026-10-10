@@ -1,8 +1,9 @@
-import { useI18n } from '../i18n/I18nProvider.jsx';
+import { useI18n } from '../i18n/I18nProvider';
+import type { Roll } from '../types';
 
-export default function Tally({ rolls }) {
+export default function Tally({ rolls }: { rolls: Roll[] }) {
   const { t } = useI18n();
-  const counts = [0, 0, 0, 0, 0, 0];
+  const counts: number[] = [0, 0, 0, 0, 0, 0];
   for (const roll of rolls) {
     for (const n of roll.values) counts[n - 1]++;
   }

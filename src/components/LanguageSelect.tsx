@@ -1,5 +1,5 @@
-import { languages } from '../i18n/locales.js';
-import { useI18n } from '../i18n/I18nProvider.jsx';
+import { languages } from '../i18n/locales';
+import { useI18n } from '../i18n/I18nProvider';
 
 export default function LanguageSelect() {
   const { lang, setLang, t } = useI18n();
