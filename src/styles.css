@@ -1,0 +1,81 @@
+/* Layout: het hele scherm is de app. De dobbelstenen vullen het speelveld en schalen mee;
+   een Bootstrap-card met uitslag, laatste worpen, telling en knoppen staat eronder (staand) of ernaast (liggend).
+   Alle kleuren komen uit de variabelen van Bootstrap, dus licht en donker (data-bs-theme) volgen vanzelf. */
+
+html { height: 100%; }
+body {
+  height: 100%;
+  overflow: hidden;
+  padding-block: max(1rem, env(safe-area-inset-top, 0px)) max(1rem, env(safe-area-inset-bottom, 0px));
+  padding-inline: 1rem;
+}
+#root { height: 100%; }
+
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 1rem;
+}
+@media (min-aspect-ratio: 4/3) {
+  .app { grid-template-rows: none; grid-template-columns: minmax(0, 1fr) 20rem; gap: 1.5rem; }
+}
+
+.stage { min-width: 0; min-height: 0; }
+.dice { height: 100%; display: grid; justify-content: center; align-content: center; }
+
+.die {
+  width: 100%;
+  height: 100%;
+  background: var(--bs-danger);
+  border-radius: 22%;
+  box-shadow: inset 0 -0.35em 0 rgba(0, 0, 0, 0.18), 0 8px 18px rgba(0, 0, 0, 0.18);
+  padding: 14%;
+}
+.die.rolling { animation: wobble 0.28s ease-in-out infinite; }
+@keyframes wobble {
+  0% { transform: rotate(-7deg) translateY(0); }
+  50% { transform: rotate(7deg) translateY(-8px); }
+  100% { transform: rotate(-7deg) translateY(0); }
+}
+.face { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
+.cell { display: flex; align-items: center; justify-content: center; }
+.pip { width: 72%; aspect-ratio: 1; border-radius: 50%; background: #fff; display: block; }
+
+.panel { min-width: 0; min-height: 0; }
+.panel .card-body { min-height: 0; }
+.top { min-height: 2rem; }
+.result { min-width: 0; font-variant-numeric: tabular-nums; }
+.result .parts { overflow-wrap: anywhere; }
+
+.icon-btn { width: 2rem; height: 2rem; flex-shrink: 0; }
+.icon-btn svg { width: 1.1rem; height: 1.1rem; }
+.lang { width: auto; max-width: 7.5rem; }
+
+.section-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bs-secondary-color);
+}
+.recent { flex-wrap: nowrap; min-height: 2rem; padding-bottom: 2px; }
+@media (min-aspect-ratio: 4/3) { .recent { flex-wrap: wrap; overflow-x: visible !important; } }
+
+.tally { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.4rem; height: 5.75rem; }
+.col-tally { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; min-width: 0; min-height: 0; font-variant-numeric: tabular-nums; }
+.col-tally .barwrap { flex: 1; min-height: 0; width: 100%; display: flex; align-items: flex-end; }
+.col-tally .bar { width: 100%; border-radius: 4px 4px 0 0; min-height: 3px; transition: height 0.25s ease; }
+@media (min-aspect-ratio: 4/3) { .tally { height: 8rem; } }
+
+.stepper { width: auto; flex: 0 0 auto; flex-wrap: nowrap; }
+.stepper .btn { min-width: 2.5rem; font-weight: 600; }
+.stepper-n { min-width: 3.5rem; font-variant-numeric: tabular-nums; }
+.stepper-n small { font-size: 0.6875rem; }
+.controls .btn-lg { min-width: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .die.rolling { animation: none; }
+  .col-tally .bar { transition: none; }
+}
