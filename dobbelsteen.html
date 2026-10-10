@@ -1,0 +1,402 @@
+<title>Dobbelsteen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Hanken+Grotesk:wght@400;500;600&display=swap">
+<style>
+/* Layout: the whole screen is the app. Dice fill the stage and resize to fit; a panel with result, recent rolls, tally and controls sits below (portrait) or to the right (landscape). */
+:root {
+  --bg: #eceee9;
+  --surface: #f9faf6;
+  --ink: #1c221f;
+  --muted: #5a665f;
+  --line: #d3d8d0;
+  --accent: #c2412b;
+  --on-accent: #ffffff;
+  --pip: #ffffff;
+  --bar: #b9c1b8;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131714;
+    --surface: #1b211d;
+    --ink: #eceee9;
+    --muted: #9aa59d;
+    --line: #2c342e;
+    --accent: #cf4630;
+    --bar: #3b463e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131714;
+  --surface: #1b211d;
+  --ink: #eceee9;
+  --muted: #9aa59d;
+  --line: #2c342e;
+  --accent: #cf4630;
+  --bar: #3b463e;
+  color-scheme: dark;
+}
+
+html { box-sizing: border-box; height: 100%; }
+body {
+  box-sizing: border-box;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  padding-block: 1rem;
+  padding-inline: 1rem;
+  overflow: hidden;
+}
+#root { height: 100%; }
+
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 1rem;
+}
+@media (min-aspect-ratio: 4/3) {
+  .app { grid-template-rows: none; grid-template-columns: minmax(0, 1fr) 20rem; gap: 1.5rem; }
+}
+
+.stage { min-width: 0; min-height: 0; }
+.dice { height: 100%; display: grid; justify-content: center; align-content: center; }
+
+.die {
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 22%;
+  box-shadow: inset 0 -0.35em 0 rgba(0, 0, 0, 0.18), 0 8px 18px rgba(0, 0, 0, 0.18);
+  padding: 14%;
+  box-sizing: border-box;
+}
+.die.rolling { animation: wobble 0.28s ease-in-out infinite; }
+@keyframes wobble {
+  0% { transform: rotate(-7deg) translateY(0); }
+  50% { transform: rotate(7deg) translateY(-8px); }
+  100% { transform: rotate(-7deg) translateY(0); }
+}
+.face { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
+.cell { display: flex; align-items: center; justify-content: center; }
+.pip { width: 72%; aspect-ratio: 1; border-radius: 50%; background: var(--pip); display: block; }
+
+.panel {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 2.25rem; }
+.result { margin: 0; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 0; }
+.result strong { color: var(--ink); font-weight: 600; font-family: var(--font-display); font-size: 1.5rem; line-height: 1; }
+.result .parts { overflow-wrap: anywhere; }
+
+button { font: inherit; color: inherit; }
+.icon-btn {
+  appearance: none;
+  flex-shrink: 0;
+  width: 2.25rem; height: 2.25rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 0;
+}
+.icon-btn:hover:not(:disabled) { color: var(--ink); border-color: var(--muted); }
+.icon-btn:disabled { opacity: 0.45; cursor: default; }
+.icon-btn:focus-visible, .roll:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.icon-btn svg { width: 1.1rem; height: 1.1rem; }
+
+h2 {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin: 0 0 0.4rem;
+}
+.recent { display: flex; flex-wrap: nowrap; gap: 0.4rem; overflow-x: auto; min-height: 2rem; align-items: center; padding-bottom: 2px; }
+.chip {
+  flex-shrink: 0;
+  min-width: 2rem; height: 2rem;
+  padding-inline: 0.45rem;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.chip.latest { border-color: var(--accent); }
+.empty { color: var(--muted); margin: 0; font-size: 0.9375rem; }
+@media (min-aspect-ratio: 4/3) { .recent { flex-wrap: wrap; overflow-x: visible; } }
+
+.tally { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.4rem; height: 5.75rem; }
+.col { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; min-width: 0; min-height: 0; }
+.col .count { font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.col .barwrap { flex: 1; min-height: 0; width: 100%; display: flex; align-items: flex-end; }
+.col .bar { width: 100%; background: var(--bar); border-radius: 4px 4px 0 0; min-height: 3px; transition: height 0.25s ease; }
+.col .bar.top { background: var(--accent); }
+.col .label { font-weight: 600; font-size: 0.875rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
+@media (min-aspect-ratio: 4/3) { .tally { height: 8rem; } }
+
+.controls { display: flex; gap: 0.5rem; align-items: stretch; margin-top: auto; }
+.stepper {
+  display: flex; align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+}
+.stepper button {
+  appearance: none; border: 0; background: transparent;
+  width: 2.5rem; align-self: stretch;
+  font-size: 1.25rem; font-weight: 600; cursor: pointer; border-radius: 10px;
+}
+.stepper button:disabled { opacity: 0.35; cursor: default; }
+.stepper button:focus-visible { outline: 3px solid var(--ink); outline-offset: -3px; }
+.stepper .n { min-width: 3rem; text-align: center; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stepper .n b { display: block; font-size: 1.125rem; }
+.stepper .n span { display: block; font-size: 0.6875rem; color: var(--muted); }
+
+button.roll {
+  appearance: none;
+  border: 0;
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-accent);
+  cursor: pointer;
+}
+button.roll:hover:not(:disabled) { filter: brightness(1.08); }
+button.roll:active:not(:disabled) { transform: translateY(1px); }
+button.roll:disabled { opacity: 0.7; cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .die.rolling { animation: none; }
+  .col .bar { transition: none; }
+}
+</style>
+
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>
+(function () {
+  var h = React.createElement;
+  var useState = React.useState, useRef = React.useRef, useEffect = React.useEffect, useLayoutEffect = React.useLayoutEffect;
+
+  var MIN_DICE = 1, MAX_DICE = 6, GAP = 16, MAX_SIZE = 320;
+
+  // Welke van de 9 vakjes (3x3, rij voor rij) een oog krijgen
+  var PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+  var CELLS = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+  function randomFace() { return 1 + Math.floor(Math.random() * 6); }
+  function sum(arr) { return arr.reduce(function (a, b) { return a + b; }, 0); }
+
+  // Kies het aantal kolommen waarbij de dobbelstenen zo groot mogelijk worden
+  function bestLayout(n, w, hgt) {
+    var best = { cols: 1, rows: n, size: 0 };
+    for (var c = 1; c <= n; c++) {
+      var r = Math.ceil(n / c);
+      var s = Math.min((w - GAP * (c - 1)) / c, (hgt - GAP * (r - 1)) / r);
+      if (s > best.size) best = { cols: c, rows: r, size: s };
+    }
+    best.size = Math.max(60, Math.min(Math.floor(best.size), MAX_SIZE));
+    return best;
+  }
+
+  function Die(props) {
+    return h('div', {
+      className: 'die' + (props.rolling ? ' rolling' : ''),
+      style: props.rolling ? { animationDelay: (-props.index * 0.07) + 's' } : null,
+      role: 'img',
+      'aria-label': 'Dobbelsteen met ' + props.value + ' ogen'
+    },
+      h('div', { className: 'face' },
+        CELLS.map(function (i) {
+          return h('span', { key: i, className: 'cell' },
+            PIPS[props.value].indexOf(i) !== -1 ? h('i', { className: 'pip' }) : null);
+        })
+      )
+    );
+  }
+
+  function Tally(props) {
+    var counts = [0, 0, 0, 0, 0, 0];
+    props.rolls.forEach(function (r) { r.values.forEach(function (n) { counts[n - 1]++; }); });
+    var max = Math.max.apply(null, counts);
+    return h('div', { className: 'tally', role: 'img', 'aria-label': 'Aantal keer gegooid per aantal ogen: ' + counts.join(', ') },
+      counts.map(function (c, i) {
+        var pct = max === 0 ? 0 : Math.round((c / max) * 100);
+        return h('div', { className: 'col', key: i },
+          h('span', { className: 'count' }, c),
+          h('div', { className: 'barwrap' },
+            h('div', { className: 'bar' + (c > 0 && c === max ? ' top' : ''), style: { height: pct + '%' } })
+          ),
+          h('span', { className: 'label' }, i + 1)
+        );
+      })
+    );
+  }
+
+  function FsIcon(props) {
+    var d = props.on
+      ? 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5'
+      : 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5';
+    return h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true },
+      h('path', { d: d, fill: 'none' }));
+  }
+
+  function App() {
+    var s1 = useState([5, 3]), values = s1[0], setValues = s1[1];
+    var s2 = useState(false), rolling = s2[0], setRolling = s2[1];
+    var s3 = useState([]), rolls = s3[0], setRolls = s3[1];
+    var s4 = useState({ w: 0, h: 0 }), box = s4[0], setBox = s4[1];
+    var s5 = useState(false), isFs = s5[0], setIsFs = s5[1];
+    var timer = useRef(null);
+    var stageRef = useRef(null);
+    var idRef = useRef(0);
+    var count = values.length;
+
+    useEffect(function () { return function () { clearInterval(timer.current); }; }, []);
+
+    useLayoutEffect(function () {
+      var el = stageRef.current;
+      function measure() {
+        var r = el.getBoundingClientRect();
+        setBox(function (prev) { return (Math.abs(prev.w - r.width) < 1 && Math.abs(prev.h - r.height) < 1) ? prev : { w: r.width, h: r.height }; });
+      }
+      measure();
+      var ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+      if (ro) ro.observe(el);
+      window.addEventListener('resize', measure);
+      return function () { if (ro) ro.disconnect(); window.removeEventListener('resize', measure); };
+    }, []);
+
+    useEffect(function () {
+      function onChange() { setIsFs(!!document.fullscreenElement); }
+      document.addEventListener('fullscreenchange', onChange);
+      return function () { document.removeEventListener('fullscreenchange', onChange); };
+    }, []);
+
+    function setCount(n) {
+      if (rolling || n < MIN_DICE || n > MAX_DICE) return;
+      setValues(function (prev) {
+        if (n > prev.length) {
+          var extra = [];
+          for (var i = prev.length; i < n; i++) extra.push(randomFace());
+          return prev.concat(extra);
+        }
+        return prev.slice(0, n);
+      });
+    }
+
+    function roll() {
+      if (rolling) return;
+      var final = values.map(randomFace);
+      function finish() {
+        setValues(final);
+        setRolling(false);
+        idRef.current += 1;
+        var entry = { id: idRef.current, values: final, sum: sum(final) };
+        setRolls(function (prev) { return [entry].concat(prev); });
+      }
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) { finish(); return; }
+      setRolling(true);
+      var ticks = 0;
+      timer.current = setInterval(function () {
+        ticks++;
+        if (ticks >= 10) { clearInterval(timer.current); finish(); }
+        else setValues(function (prev) { return prev.map(randomFace); });
+      }, 70);
+    }
+
+    function toggleFs() {
+      try {
+        var p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+        if (p && p.catch) p.catch(function () {});
+      } catch (e) {}
+    }
+
+    var layout = bestLayout(count, box.w || 320, box.h || 320);
+    var last = rolls[0];
+    var status;
+    if (rolling) status = count === 1 ? 'De dobbelsteen rolt…' : 'De dobbelstenen rollen…';
+    else if (!last) status = 'Nog niet gegooid';
+    else if (last.values.length === 1) status = h('span', null, 'Je gooide ', h('strong', null, last.sum));
+    else status = h('span', null, 'Totaal ', h('strong', null, last.sum), ' ', h('span', { className: 'parts' }, '(' + last.values.join(' + ') + ')'));
+
+    var thrown = rolls.reduce(function (a, r) { return a + r.values.length; }, 0);
+
+    return h('div', { className: 'app' },
+      h('div', { className: 'stage', ref: stageRef },
+        h('div', {
+          className: 'dice',
+          style: {
+            gridTemplateColumns: 'repeat(' + layout.cols + ', ' + layout.size + 'px)',
+            gridAutoRows: layout.size + 'px',
+            gap: GAP + 'px'
+          }
+        },
+          values.map(function (v, i) { return h(Die, { key: i, index: i, value: v, rolling: rolling }); })
+        )
+      ),
+      h('section', { className: 'panel' },
+        h('div', { className: 'top' },
+          h('p', { className: 'result', 'aria-live': 'polite' }, status),
+          document.fullscreenEnabled
+            ? h('button', { type: 'button', className: 'icon-btn', onClick: toggleFs, 'aria-label': isFs ? 'Volledig scherm sluiten' : 'Volledig scherm', title: isFs ? 'Volledig scherm sluiten' : 'Volledig scherm' }, h(FsIcon, { on: isFs }))
+            : null
+        ),
+        h('div', null,
+          h('h2', null, 'Laatste worpen'),
+          rolls.length === 0
+            ? h('p', { className: 'empty' }, 'Je worpen verschijnen hier.')
+            : h('div', { className: 'recent' },
+                rolls.slice(0, 12).map(function (r, i) {
+                  return h('span', { key: r.id, className: 'chip' + (i === 0 ? ' latest' : ''), title: r.values.join(' + ') }, r.sum);
+                }))
+        ),
+        h('div', null,
+          h('h2', null, 'Aantal per kant' + (thrown ? ' · ' + thrown + ' gegooid' : '')),
+          h(Tally, { rolls: rolls })
+        ),
+        h('div', { className: 'controls' },
+          h('div', { className: 'stepper', role: 'group', 'aria-label': 'Aantal dobbelstenen' },
+            h('button', { id: 'fewer', type: 'button', onClick: function () { setCount(count - 1); }, disabled: rolling || count <= MIN_DICE, 'aria-label': 'Eén dobbelsteen minder' }, '−'),
+            h('div', { className: 'n', 'aria-live': 'polite' }, h('b', null, count), h('span', null, 'stenen')),
+            h('button', { id: 'more', type: 'button', onClick: function () { setCount(count + 1); }, disabled: rolling || count >= MAX_DICE, 'aria-label': 'Eén dobbelsteen meer' }, '+')
+          ),
+          h('button', { id: 'roll', className: 'roll', type: 'button', onClick: roll, disabled: rolling },
+            rolling ? 'Aan het rollen…' : 'Gooi')
+        )
+      )
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+})();
+</script>
