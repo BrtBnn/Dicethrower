@@ -3,7 +3,69 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Dobbelsteen</title>
+
+    <title>Dobbelsteen online gooien – Dicethrower</title>
+    <meta
+      name="description"
+      content="Gooi gratis online met 1 tot 6 dobbelstenen. Schermvullend, met worpgeschiedenis en telling per kant, in 11 talen en met licht en donker thema."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://dicethrower.brtbnn.nl/" />
+
+    <!-- Logo en pictogrammen -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#212529" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn, Slack) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Dicethrower" />
+    <meta property="og:title" content="Dobbelsteen online gooien – Dicethrower" />
+    <meta
+      property="og:description"
+      content="Gooi gratis online met 1 tot 6 dobbelstenen. Schermvullend, met worpgeschiedenis en telling per kant, in 11 talen."
+    />
+    <meta property="og:url" content="https://dicethrower.brtbnn.nl/" />
+    <meta property="og:image" content="https://dicethrower.brtbnn.nl/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Rode dobbelsteen met vijf ogen en de tekst Dicethrower" />
+    <meta property="og:locale" content="nl_NL" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dobbelsteen online gooien – Dicethrower" />
+    <meta
+      name="twitter:description"
+      content="Gooi gratis online met 1 tot 6 dobbelstenen. Schermvullend, in 11 talen."
+    />
+    <meta name="twitter:image" content="https://dicethrower.brtbnn.nl/og-image.png" />
+    <meta name="twitter:image:alt" content="Rode dobbelsteen met vijf ogen en de tekst Dicethrower" />
+
+    <!-- Gestructureerde gegevens voor Google -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Dicethrower",
+        "alternateName": "Dobbelsteen online",
+        "url": "https://dicethrower.brtbnn.nl/",
+        "description": "Online dobbelsteen: gooi met 1 tot 6 dobbelstenen, bekijk je worpen en de telling per kant.",
+        "image": "https://dicethrower.brtbnn.nl/og-image.png",
+        "logo": "https://dicethrower.brtbnn.nl/icon-512.png",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Alle systemen met een moderne browser",
+        "browserRequirements": "Vereist JavaScript",
+        "inLanguage": ["nl", "en", "zh", "hi", "es", "ar", "fr", "bn", "pt", "ru", "ur"],
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+      }
+    </script>
+
     <script>
       // Zet het thema meteen goed, zodat de pagina niet eerst licht flitst bij een donkere systeeminstelling.
       document.documentElement.setAttribute(
@@ -13,7 +75,22 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Tekst voor zoekmachines en voordat de app geladen is. React vervangt dit zodra de app start. -->
+      <main>
+        <h1>Dicethrower: dobbelsteen online gooien</h1>
+        <p>
+          Gooi gratis met 1 tot 6 dobbelstenen tegelijk. De dobbelstenen vullen het hele scherm, je ziet het totaal
+          van elke worp, je laatste worpen en hoe vaak elke kant is gevallen.
+        </p>
+        <ul>
+          <li>Beschikbaar in 11 talen: Nederlands, English, 中文, हिन्दी, Español, العربية, Français, বাংলা, Português, Русский en اردو</li>
+          <li>Licht en donker thema volgens de instelling van je apparaat</li>
+          <li>Werkt op telefoon, tablet en computer</li>
+        </ul>
+        <noscript>Voor deze dobbelsteen is JavaScript nodig. Zet JavaScript aan in je browser om te gooien.</noscript>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

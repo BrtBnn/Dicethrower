@@ -50,7 +50,7 @@ export type MessageKey = keyof Messages;
 
 export const locales: Record<LanguageCode, Messages> = {
   nl: {
-    title: "Dobbelsteen",
+    title: "Dobbelsteen online gooien – Dicethrower",
     notRolledYet: "Nog niet gegooid",
     rolledOne: "Je gooide {n}",
     rolledTotal: "Totaal {total}",
@@ -73,7 +73,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "Taal",
   },
   en: {
-    title: "Dice",
+    title: "Roll dice online – Dicethrower",
     notRolledYet: "Not rolled yet",
     rolledOne: "You rolled {n}",
     rolledTotal: "Total {total}",
@@ -96,7 +96,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "Language",
   },
   zh: {
-    title: "骰子",
+    title: "在线掷骰子 – Dicethrower",
     notRolledYet: "还没有掷骰子",
     rolledOne: "你掷出了 {n}",
     rolledTotal: "总计 {total}",
@@ -119,7 +119,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "语言",
   },
   hi: {
-    title: "पासा",
+    title: "ऑनलाइन पासा फेंकें – Dicethrower",
     notRolledYet: "अभी तक नहीं फेंका",
     rolledOne: "आपने {n} फेंका",
     rolledTotal: "कुल {total}",
@@ -142,7 +142,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "भाषा",
   },
   es: {
-    title: "Dado",
+    title: "Tirar dados online – Dicethrower",
     notRolledYet: "Aún no has tirado",
     rolledOne: "Sacaste {n}",
     rolledTotal: "Total {total}",
@@ -165,7 +165,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "Idioma",
   },
   ar: {
-    title: "نرد",
+    title: "رمي النرد عبر الإنترنت – Dicethrower",
     notRolledYet: "لم ترمِ النرد بعد",
     rolledOne: "حصلت على {n}",
     rolledTotal: "المجموع {total}",
@@ -188,7 +188,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "اللغة",
   },
   fr: {
-    title: "Dé",
+    title: "Lancer de dés en ligne – Dicethrower",
     notRolledYet: "Pas encore lancé",
     rolledOne: "Vous avez fait {n}",
     rolledTotal: "Total {total}",
@@ -211,7 +211,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "Langue",
   },
   bn: {
-    title: "পাশা",
+    title: "অনলাইনে পাশা ছুড়ুন – Dicethrower",
     notRolledYet: "এখনও ছোড়া হয়নি",
     rolledOne: "আপনি {n} পেয়েছেন",
     rolledTotal: "মোট {total}",
@@ -234,7 +234,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "ভাষা",
   },
   pt: {
-    title: "Dado",
+    title: "Jogar dados online – Dicethrower",
     notRolledYet: "Ainda não lançou",
     rolledOne: "Você tirou {n}",
     rolledTotal: "Total {total}",
@@ -257,7 +257,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "Idioma",
   },
   ru: {
-    title: "Кубик",
+    title: "Бросок кубиков онлайн – Dicethrower",
     notRolledYet: "Ещё не бросали",
     rolledOne: "Выпало {n}",
     rolledTotal: "Сумма {total}",
@@ -280,7 +280,7 @@ export const locales: Record<LanguageCode, Messages> = {
     language: "Язык",
   },
   ur: {
-    title: "پانسہ",
+    title: "آن لائن پانسہ پھینکیں – Dicethrower",
     notRolledYet: "ابھی تک نہیں پھینکا",
     rolledOne: "آپ کا پانسہ {n} آیا",
     rolledTotal: "کل {total}",

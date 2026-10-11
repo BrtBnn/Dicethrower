@@ -19,6 +19,12 @@
 	# De startpagina moet altijd vers zijn, anders blijft een oude versie hangen.
 	@html path / /index.html
 	header @html Cache-Control "no-cache"
+
+	# Manifest met het juiste type, en een korte cache voor bestanden die zoekmachines ophalen.
+	@manifest path /manifest.webmanifest
+	header @manifest Content-Type "application/manifest+json"
+	@seo path /robots.txt /sitemap.xml
+	header @seo Cache-Control "public, max-age=3600"
 }
 
 # Alleen binnen de container, voor de healthcheck. Niet naar buiten gepubliceerd.

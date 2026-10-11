@@ -96,6 +96,22 @@ DOMAIN=localhost docker compose up --build
 
 Open dan `https://localhost`. Caddy maakt daarvoor een eigen certificaat, dus je browser vraagt eenmalig om bevestiging.
 
+## Zoekmachines en delen (SEO)
+
+`index.html` bevat alles wat Google en sociale media nodig hebben: een beschrijvende titel en omschrijving, een canonieke URL, Open Graph en Twitter-kaarten (met `og-image.png`), gestructureerde gegevens (JSON-LD, type `WebApplication`) en tekst die zichtbaar is voordat de app geladen is. De bestanden in `public/` worden naast de build geserveerd:
+
+| Bestand | Doel |
+| --- | --- |
+| `favicon.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` | logo in tabbladen, bladwijzers en op het beginscherm |
+| `logo.svg` | het logo als bronbestand |
+| `og-image.png` | deelafbeelding van 1200×630 |
+| `manifest.webmanifest` | app-gegevens voor installeren op het beginscherm |
+| `robots.txt`, `sitemap.xml` | wijzen zoekmachines de weg |
+
+De titel in het tabblad volgt de gekozen taal (`title` in `src/i18n/locales.ts`). Bij een nieuwe taal hoort dus ook een beschrijvende titel.
+
+Na het live zetten kun je de site aanmelden in [Google Search Console](https://search.google.com/search-console) en daar `https://dicethrower.brtbnn.nl/sitemap.xml` indienen. Dat versnelt het opnemen in de index.
+
 ## Thema
 
 Licht of donker volgt automatisch de systeeminstelling. Dat gaat via het `data-bs-theme`-attribuut van Bootstrap: een klein script in `index.html` zet het thema voordat de pagina getekend wordt, zodat er niets flitst, en `src/hooks/useSystemTheme.ts` houdt het daarna bij. Eigen stijlen gebruiken alleen Bootstrap-variabelen (`--bs-*`), dus beide thema's kloppen vanzelf.
@@ -133,6 +149,7 @@ src/
   i18n/locales.ts            talen en vertalingen
   i18n/I18nProvider.tsx      taalkeuze en de functie t()
   styles.css                 indeling en de dobbelsteen zelf, bovenop Bootstrap
+public/                      logo, iconen, deelafbeelding, manifest, robots.txt en sitemap.xml
 Dockerfile                   bouwt de app en zet hem in een Caddy-image
 Caddyfile                    HTTPS, compressie, caching en beveiligingskoppen
 docker-compose.yml           de service voor productie, met volumes voor certificaten

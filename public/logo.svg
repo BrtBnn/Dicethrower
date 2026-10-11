@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  <title id="t">Dicethrower</title>
+  <defs><clipPath id="d"><rect x="32" y="32" width="448" height="448" rx="100"/></clipPath></defs>
+  <rect x="32" y="32" width="448" height="448" rx="100" fill="#dc3545"/>
+  <rect x="32" y="410" width="448" height="70" fill="#000" opacity="0.16" clip-path="url(#d)"/>
+  <g fill="#fff">
+    <circle cx="170" cy="160" r="38"/>
+    <circle cx="342" cy="160" r="38"/>
+    <circle cx="256" cy="246" r="38"/>
+    <circle cx="170" cy="332" r="38"/>
+    <circle cx="342" cy="332" r="38"/>
+  </g>
+</svg>
