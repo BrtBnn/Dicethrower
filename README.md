@@ -2,6 +2,8 @@
 
 Een schermvullende dobbelsteen-app in React en TypeScript, opgemaakt met Bootstrap. Gooi met 1 tot 6 dobbelstenen, bekijk je laatste worpen en zie hoe vaak elke kant is gevallen. De app werkt in 11 talen en volgt automatisch het lichte of donkere thema van je apparaat.
 
+**Live:** https://dicethrower.brtbnn.nl
+
 ## Functies
 
 - **1 tot 6 dobbelstenen** tegelijk, met een rolanimatie en het totaal van de worp
@@ -21,6 +23,7 @@ Een schermvullende dobbelsteen-app in React en TypeScript, opgemaakt met Bootstr
 | Bouwen | Vite 5 |
 | Opmaak | Bootstrap 5.3, alleen de CSS |
 | Vertalingen | eigen lichte laag, zonder extra bibliotheek |
+| Productie | Docker Compose met Caddy (automatisch HTTPS) |
 
 ## Aan de slag
 
@@ -34,6 +37,8 @@ npm run dev
 ```
 
 Open daarna het adres dat Vite toont, meestal `http://localhost:5173`.
+
+Er staat nog geen `package-lock.json` in de repo. Die ontstaat bij je eerste `npm install`; commit hem dan, zodat builds (ook die in Docker) overal dezelfde versies gebruiken.
 
 ### Scripts
 
@@ -116,6 +121,8 @@ Plaatshouders zoals `{n}` blijven in elke taal staan, zoals ze zijn.
 index.html                   startpagina, zet het thema voor het eerste tekenen
 vite.config.ts               Vite-configuratie
 tsconfig.json                TypeScript-instellingen (strict)
+.editorconfig                vaste opmaak in editors
+LICENSE                      MIT-licentie
 src/
   main.tsx                   startpunt
   App.tsx                    de app: worp, geschiedenis, bediening
@@ -129,6 +136,7 @@ src/
 Dockerfile                   bouwt de app en zet hem in een Caddy-image
 Caddyfile                    HTTPS, compressie, caching en beveiligingskoppen
 docker-compose.yml           de service voor productie, met volumes voor certificaten
+.dockerignore                houdt node_modules en dist buiten de Docker-build
 dobbelsteen.html             de oorspronkelijke versie in één bestand, zonder build
 ```
 
