@@ -1,0 +1,27 @@
+# Productie: dicethrower.brtbnn.nl. Caddy haalt en vernieuwt het Let's Encrypt-certificaat zelf.
+# Lokaal proberen: DOMAIN=localhost docker compose up --build  (dan https://localhost)
+{$DOMAIN:dicethrower.brtbnn.nl} {
+	root * /srv
+	encode zstd gzip
+	file_server
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# Vite zet een hash in de bestandsnamen onder /assets, dus die mogen een jaar in de cache.
+	@assets path /assets/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	# De startpagina moet altijd vers zijn, anders blijft een oude versie hangen.
+	@html path / /index.html
+	header @html Cache-Control "no-cache"
+}
+
+# Alleen binnen de container, voor de healthcheck. Niet naar buiten gepubliceerd.
+:8081 {
+	respond /health "ok" 200
+}

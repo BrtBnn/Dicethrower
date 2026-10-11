@@ -1,0 +1,27 @@
+services:
+  web:
+    build: .
+    image: dicethrower:latest
+    container_name: dicethrower
+    restart: unless-stopped
+    environment:
+      # Overschrijf met een .env-bestand of: DOMAIN=localhost docker compose up
+      DOMAIN: ${DOMAIN:-dicethrower.brtbnn.nl}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    volumes:
+      # Bewaart de certificaten, zodat ze een herstart of nieuwe build overleven.
+      - caddy_data:/data
+      - caddy_config:/config
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8081/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  caddy_data:
+  caddy_config:

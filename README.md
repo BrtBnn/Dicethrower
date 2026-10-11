@@ -48,6 +48,49 @@ Open daarna het adres dat Vite toont, meestal `http://localhost:5173`.
 
 `npm run build` maakt een map `dist/` met gewone bestanden. Die kun je op elke statische host zetten, bijvoorbeeld GitHub Pages. De build gebruikt relatieve paden, dus hij werkt ook in een submap.
 
+### Productie op een VPS met Docker
+
+De productie draait op **https://dicethrower.brtbnn.nl**. De Docker-opzet bouwt de app en serveert hem met [Caddy](https://caddyserver.com), dat het HTTPS-certificaat zelf aanvraagt en vernieuwt. Het is één container, zonder aparte webserver of certbot.
+
+Eenmalig:
+
+1. Laat een **A-record** (en eventueel AAAA) van `dicethrower.brtbnn.nl` naar het IP-adres van de VPS wijzen.
+2. Zorg dat poort **80 en 443** (TCP, en 443 UDP voor HTTP/3) open staan in de firewall van de VPS.
+3. Installeer Docker met de Compose-plug-in op de VPS.
+
+Starten of bijwerken:
+
+```bash
+git clone https://github.com/BrtBnn/Dicethrower.git
+cd Dicethrower
+docker compose up -d --build
+```
+
+Een nieuwe versie uitrollen:
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+Nuttig:
+
+```bash
+docker compose ps          # status, inclusief healthcheck
+docker compose logs -f     # logs volgen
+docker compose down        # stoppen (certificaten blijven bewaard in een volume)
+```
+
+Het certificaat wordt opgeslagen in het Docker-volume `caddy_data`, dus het blijft bestaan na een herstart of nieuwe build. Gebruik `docker compose down -v` alleen als je het ook wilt verwijderen. Let op dat Let's Encrypt limieten heeft op het aantal nieuwe certificaten.
+
+Lokaal proberen kan met een ander domein:
+
+```bash
+DOMAIN=localhost docker compose up --build
+```
+
+Open dan `https://localhost`. Caddy maakt daarvoor een eigen certificaat, dus je browser vraagt eenmalig om bevestiging.
+
 ## Thema
 
 Licht of donker volgt automatisch de systeeminstelling. Dat gaat via het `data-bs-theme`-attribuut van Bootstrap: een klein script in `index.html` zet het thema voordat de pagina getekend wordt, zodat er niets flitst, en `src/hooks/useSystemTheme.ts` houdt het daarna bij. Eigen stijlen gebruiken alleen Bootstrap-variabelen (`--bs-*`), dus beide thema's kloppen vanzelf.
@@ -83,6 +126,9 @@ src/
   i18n/locales.ts            talen en vertalingen
   i18n/I18nProvider.tsx      taalkeuze en de functie t()
   styles.css                 indeling en de dobbelsteen zelf, bovenop Bootstrap
+Dockerfile                   bouwt de app en zet hem in een Caddy-image
+Caddyfile                    HTTPS, compressie, caching en beveiligingskoppen
+docker-compose.yml           de service voor productie, met volumes voor certificaten
 dobbelsteen.html             de oorspronkelijke versie in één bestand, zonder build
 ```
 
